@@ -119,12 +119,6 @@ VectorXd h_of_x(const VectorXd& x)
     double vx = x[2];
     double vy = x[3];
 
-    //if (fabs(py) < 0.1)
-    //{
-    //    // values of py < 0.1 flip sign of angle
-    //    py = 0.1;
-    //}
-
     if (fabs(px) < 0.001)
     {
         cout << "ERROR: h_of_x: fabs(px) < 0.0001\n";
