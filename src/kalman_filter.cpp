@@ -1,4 +1,4 @@
-#include <iostream>
+﻿#include <iostream>
 
 #include "kalman_filter.h"
 #include "tools.h"
@@ -66,8 +66,10 @@ void KalmanFilter::UpdateEKF(const VectorXd &z, const Eigen::MatrixXd& H, const 
 {
 	// TODO: update the state by using Extended Kalman Filter equations
 
-    VectorXd z_pred = h_of_x(x_); //VectorXd z_pred = H_ * x_;
+    VectorXd z_pred = h_of_x(x_);
     VectorXd y = z - z_pred;
+
+    y[1] = fmod(y[1], M_PI);
 
     MatrixXd Ht = H.transpose();
     MatrixXd S = H * P_ * Ht + R;
