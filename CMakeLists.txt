@@ -1,4 +1,4 @@
-project(ExtendedKF)
+project(ExtendedKF_WS)
 
 cmake_minimum_required (VERSION 3.5)
 
@@ -7,7 +7,17 @@ add_definitions(-std=c++11)
 set(CXX_FLAGS "-Wall")
 set(CMAKE_CXX_FLAGS, "${CXX_FLAGS}")
 
-set(sources src/main.cpp src/tools.cpp src/FusionEKF.cpp src/kalman_filter.cpp)
+set(sources 
+	src/FusionEKF.cpp 
+	src/FusionEKF.h
+	src/json.hpp 
+	src/kalman_filter.cpp
+	src/kalman_filter.h
+	src/main.cpp
+	src/measurement_package.h 
+	src/tools.cpp 
+	src/tools.h 
+)
 
 
 if(${CMAKE_SYSTEM_NAME} MATCHES "Darwin") 
@@ -23,4 +33,9 @@ endif(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
 
 add_executable(ExtendedKF ${sources})
 
-target_link_libraries(ExtendedKF z ssl uv uWS)
+target_link_libraries(ExtendedKF 
+    z 
+    ssl 
+    uv 
+    uWS
+ )
