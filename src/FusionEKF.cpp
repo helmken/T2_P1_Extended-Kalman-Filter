@@ -67,7 +67,7 @@ void FusionEKF::Initialize(const MeasurementPackage &measurement_pack)
     {
         // TODO: Convert radar from polar to cartesian coordinates and initialize state.
 
-        VectorXd cartesianPos = Polar2Cartesian(
+        const VectorXd cartesianPos = Polar2Cartesian(
             measurement_pack.raw_measurements_[0],
             measurement_pack.raw_measurements_[1],
             measurement_pack.raw_measurements_[2]);
@@ -76,8 +76,8 @@ void FusionEKF::Initialize(const MeasurementPackage &measurement_pack)
 
         ekf_.x_[0] = cartesianPos[0]; // p_x
         ekf_.x_[1] = cartesianPos[1]; // p_y
-        ekf_.x_[2] = 0.0;
-        ekf_.x_[3] = 0.0;
+        ekf_.x_[2] = cartesianPos[2]; // estimated v_x
+        ekf_.x_[3] = cartesianPos[3]; // estimated v_y
     }
     else if (measurement_pack.sensor_type_ == MeasurementPackage::LASER)
     {
@@ -132,26 +132,26 @@ void FusionEKF::ProcessMeasurement(const MeasurementPackage &measurement_pack)
         printf("dt is zero!");
     }
 
-    double dt = (measurement_pack.timestamp_ - previous_timestamp_) / 1000000.0;
+    const double dt = (measurement_pack.timestamp_ - previous_timestamp_) / 1000000.0;
     previous_timestamp_ = measurement_pack.timestamp_;
     ekf_.F_(0, 2) = dt;
     ekf_.F_(1, 3) = dt;
 
     // TODO: Update the process noise covariance matrix.
     //       - Use noise_ax = 9 and noise_ay = 9 for your Q matrix.
-    double noise_ax(9);
-    double noise_ay(9);
+    const double noise_ax(9);
+    const double noise_ay(9);
 
-    double dt_2 = pow(dt, 2);
-    double dt_3 = pow(dt, 3);
-    double dt_4 = pow(dt, 4);
+    const double dt_2 = pow(dt, 2);
+    const double dt_3 = pow(dt, 3);
+    const double dt_4 = pow(dt, 4);
 
-    double dt_4_noise_ax = dt_4 * noise_ax / 4.0;
-    double dt_3_noise_ax = dt_3 * noise_ax / 2.0;
-    double dt_4_noise_ay = dt_4 * noise_ay / 4.0;
-    double dt_3_noise_ay = dt_3 * noise_ay / 2.0;
-    double dt_2_noise_ax = dt_2 * noise_ax;
-    double dt_2_noise_ay = dt_2 * noise_ay;
+    const double dt_4_noise_ax = dt_4 * noise_ax / 4.0;
+    const double dt_3_noise_ax = dt_3 * noise_ax / 2.0;
+    const double dt_4_noise_ay = dt_4 * noise_ay / 4.0;
+    const double dt_3_noise_ay = dt_3 * noise_ay / 2.0;
+    const double dt_2_noise_ax = dt_2 * noise_ax;
+    const double dt_2_noise_ay = dt_2 * noise_ay;
 
     ekf_.Q_ <<  dt_4_noise_ax,  0,              dt_3_noise_ax,  0,
                 0,              dt_4_noise_ay,  0,              dt_3_noise_ay,
@@ -178,7 +178,7 @@ void FusionEKF::ProcessMeasurement(const MeasurementPackage &measurement_pack)
             measurement_pack.raw_measurements_[1],
             measurement_pack.raw_measurements_[2];
 
-        MatrixXd Hj = CalculateJacobian(ekf_.x_);
+        const MatrixXd Hj = CalculateJacobian(ekf_.x_);
         ekf_.UpdateEKF(measurementVec, Hj, R_radar_);
 	}
 	else 

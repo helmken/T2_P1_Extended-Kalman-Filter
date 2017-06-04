@@ -73,15 +73,9 @@ MatrixXd CalculateJacobian(const VectorXd& x_state)
     double vy = x_state(3);
 
     double px_py_sq_sum = px*px + py*py;
+    px_py_sq_sum = std::max(0.001, px_py_sq_sum);
     double sqrt_px_py_sq_sum = sqrt(px_py_sq_sum);
     double sqrt3_px_py_sq_sum = px_py_sq_sum * sqrt_px_py_sq_sum;
-
-    //check division by zero
-    if (fabs(px_py_sq_sum) < 0.0001)
-    {
-        cout << "***\n***CalculateJacobian: computation not possible: division by zero***\n***\n";
-        return Hj;
-    }
 
     //compute the Jacobian matrix
     Hj(0, 0) = px / sqrt_px_py_sq_sum;
@@ -128,19 +122,7 @@ VectorXd h_of_x(const VectorXd& x)
     double sqrt_px2_plus_py2 = sqrt(px * px + py * py);
 
     result[0] = sqrt_px2_plus_py2;
-    
-    double angle = atan2(py, px);
-    if (angle <= -M_PI || angle >= M_PI)
-    {
-        cout << "angle is not in range -pi .. pi\n";
-    }
-    //else
-    //{
-    //    printf("angle=%.3f | %.3f, x=%.3f, y=%.3f, y/x=%.3f\n", angle * 180 / M_PI, angle, px, py, py/px);
-    //}
-
-    result[1] = angle;
-
+    result[1] = atan2(py, px);
     result[2] = (px * vx + py * vy) / sqrt_px2_plus_py2;
 
     return result;
@@ -153,8 +135,8 @@ Eigen::VectorXd Polar2Cartesian(
     
     result[0] = rho * cos(phi); // p_x
     result[1] = rho * sin(phi); // p_y
-    result[2] = 0.0; // can't calculate velocity
-    result[3] = 0.0; // can't calculate velocity
+    result[2] = rho_dot * cos(phi); // approximation of v_x
+    result[3] = rho_dot * sin(phi); // approximation of v_y
     
     return result;
 }

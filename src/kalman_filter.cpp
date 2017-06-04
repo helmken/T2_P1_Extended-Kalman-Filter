@@ -69,7 +69,9 @@ void KalmanFilter::UpdateEKF(const VectorXd &z, const Eigen::MatrixXd& H, const 
     VectorXd z_pred = h_of_x(x_);
     VectorXd y = z - z_pred;
 
-    y[1] = fmod(y[1], M_PI);
+    // suggested normalization by reviewer: atan2(sin(phi), cos(phi));
+    // in my opinion fmod is computationally more efficient
+    y[1] = fmod(y[1], M_PI); 
 
     MatrixXd Ht = H.transpose();
     MatrixXd S = H * P_ * Ht + R;
